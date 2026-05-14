@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Background -->
+  <rect width="128" height="128" rx="20" ry="20" fill="#0f1117"/>
+  <!-- Border accent -->
+  <rect x="4" y="4" width="120" height="120" rx="17" ry="17" fill="none" stroke="#30363d" stroke-width="2"/>
+  <!-- Link icon (chain) -->
+  <g transform="translate(64,40)" fill="none" stroke="#1f6feb" stroke-width="6" stroke-linecap="round">
+    <!-- Left chain link outer -->
+    <rect x="-28" y="-8" width="20" height="28" rx="10" ry="10"/>
+    <!-- Right chain link outer -->
+    <rect x="8" y="4" width="20" height="28" rx="10" ry="10"/>
+  </g>
+  <!-- SL text -->
+  <text x="64" y="110" text-anchor="middle" font-family="'Segoe UI','SF Pro Display',system-ui,sans-serif" font-size="18" font-weight="800" fill="#c9d1d9" letter-spacing="2">SL</text>
+  <!-- Chain connection line (overlapping effect) -->
+  <line x1="44" y1="44" x2="44" y2="60" stroke="#1f6feb" stroke-width="6" stroke-linecap="round"/>
+  <line x1="84" y1="44" x2="84" y2="60" stroke="#1f6feb" stroke-width="6" stroke-linecap="round"/>
+</svg>

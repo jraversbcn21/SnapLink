@@ -1,0 +1,257 @@
+/**
+ * SnapLink — Popup Styles
+ * Dark dev‑tool aesthetic, 320px wide.
+ */
+
+/* ─── Reset & base ──────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  width: 320px;
+}
+
+body {
+  font-family: "SF Mono", "Fira Code", "Cascadia Code", "Consolas",
+    "Monaco", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  background: #0f1117;
+  color: #c9d1d9;
+  overflow: hidden;
+}
+
+#app {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ─── Header ────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #21262d;
+}
+
+.logo {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f0f6fc;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Rows ───────────────────────────────────────────────────────────── */
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8b949e;
+}
+
+/* ─── Platform badge ────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge-generic { background: #30363d; color: #8b949e; }
+.badge-jira    { background: #0052cc22; color: #2684ff; border: 1px solid #0052cc44; }
+.badge-linear  { background: #5e6ad222; color: #5e6ad2; border: 1px solid #5e6ad244; }
+.badge-github  { background: #23863622; color: #3fb950; border: 1px solid #23863644; }
+.badge-gitlab  { background: #e2432922; color: #e24329; border: 1px solid #e2432944; }
+.badge-trello  { background: #0079bf22; color: #0079bf; border: 1px solid #0079bf44; }
+.badge-notion  { background: #ffffff22; color: #ffffff; border: 1px solid #ffffff44; }
+.badge-clickup { background: #7b68ee22; color: #7b68ee; border: 1px solid #7b68ee44; }
+.badge-asana   { background: #f06a6a22; color: #f06a6a; border: 1px solid #f06a6a44; }
+.badge-zendesk { background: #03363d22; color: #30aabc; border: 1px solid #03363d44; }
+.badge-shortcut{ background: #ff881122; color: #ff8811; border: 1px solid #ff881144; }
+
+/* ─── Input ──────────────────────────────────────────────────────────── */
+.input {
+  width: 100%;
+  padding: 8px 10px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #e6edf3;
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 3px #1f6feb22;
+}
+
+.input::placeholder {
+  color: #484f58;
+}
+
+/* ─── URL box ────────────────────────────────────────────────────────── */
+.url-box {
+  padding: 8px 10px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #58a6ff;
+  font-family: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+  user-select: all;
+}
+
+.url-box:hover {
+  border-color: #58a6ff44;
+}
+
+/* ─── Warning banner ────────────────────────────────────────────────── */
+.warning-banner {
+  padding: 8px 10px;
+  background: #e3620922;
+  border: 1px solid #e3620944;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #f0883e;
+  line-height: 1.4;
+}
+
+.warning-banner strong {
+  color: #f0883e;
+  font-weight: 700;
+}
+
+/* ─── Ticket ID toggle ──────────────────────────────────────────────── */
+.toggle-row {
+  padding: 2px 0;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #8b949e;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.toggle-label input[type="checkbox"]:checked {
+  background: #1f6feb;
+  border-color: #1f6feb;
+}
+
+.toggle-label input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  width: 4px;
+  height: 7px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.toggle-label:hover input[type="checkbox"] {
+  border-color: #1f6feb;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ─── Button ─────────────────────────────────────────────────────────── */
+.btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: #1f6feb;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.08s ease;
+  outline: none;
+}
+
+.btn:hover:not(:disabled) {
+  background: #388bfd;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  background: #21262d;
+  color: #484f58;
+  cursor: not-allowed;
+}
+
+/* ─── Success state ──────────────────────────────────────────────────── */
+.btn.success {
+  background: #238636;
+  color: #ffffff;
+}
+
+.btn.success:hover {
+  background: #2ea043;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────── */
+.footer {
+  padding-top: 4px;
+  border-top: 1px solid #21262d;
+  text-align: center;
+}
+
+#sourceNote {
+  font-size: 10px;
+  color: #484f58;
+  font-style: italic;
+}

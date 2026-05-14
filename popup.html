@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SnapLink</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <div class="header">
+      <span class="logo">&#128279; SnapLink</span>
+    </div>
+
+    <!-- Platform badge -->
+    <div class="row">
+      <span class="label">Platform</span>
+      <span id="platformBadge" class="badge badge-generic">Detecting…</span>
+    </div>
+
+    <!-- Title (editable) -->
+    <div class="row">
+      <label class="label" for="titleInput">Title</label>
+      <input
+        type="text"
+        id="titleInput"
+        class="input title-input"
+        placeholder="Title will appear here…"
+        spellcheck="false"
+      >
+    </div>
+
+    <!-- Ticket ID toggle -->
+    <div class="row toggle-row">
+      <label class="toggle-label">
+        <input type="checkbox" id="includeTicketId" checked>
+        <span>Include ticket ID in title</span>
+      </label>
+    </div>
+
+    <!-- URL (read-only) -->
+    <div class="row">
+      <span class="label">URL</span>
+      <div id="urlDisplay" class="url-box" title="Click to copy URL">Loading…</div>
+    </div>
+
+    <!-- Warning banner (hidden by default) -->
+    <div id="warningBanner" class="warning-banner hidden">
+      &#9888; Title not auto-detected. Falling back to page title.
+      <strong>Edit above if needed.</strong>
+    </div>
+
+    <!-- Copy button -->
+    <button id="copyBtn" class="btn" disabled>Copy as Link</button>
+
+    <!-- Footer note -->
+    <div class="footer">
+      <span id="sourceNote"></span>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
