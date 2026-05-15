@@ -7,7 +7,7 @@ This document provides full context for the SnapLink Chrome extension so any AI 
 ## 1. Project overview
 
 - **Extension name:** SnapLink
-- **Version:** 1.2.0
+- **Version:** 1.3.0
 - **Purpose:** Copy ticket URLs from Jira, Linear, GitHub, and other platforms as formatted hyperlinks (HTML + plain text) to the clipboard. When pasted into Word, Excel, Google Docs, or Notion, they appear as clickable links with the ticket title as display text — never raw URLs.
 - **Repository:** `https://github.com/jraversbcn21/SnapLink.git`
 - **Branch:** `master`
@@ -23,7 +23,7 @@ SnapLink/
 ├── popup.html          — 320px dark UI, editable title input, platform badge, copy button
 ├── popup.css           — Dark theme #0f1117, monospaced typography, platform badge colors
 ├── popup.js            — Clipboard API (ClipboardItem HTML+plain), fallback logic, ticket ID toggle
-├── background.js       — Service worker, listens for Ctrl+Shift+P command, triggers copy flow
+├── background.js       — Service worker, listens for Ctrl+Shift+S command, triggers copy flow
 ├── icons/
 │   ├── icon.svg        — Base SVG icon (black bg, chain-link motif, "SL" letters)
 │   ├── icon16.png
@@ -61,7 +61,7 @@ SnapLink/
 - **`window.focus()`** is called before every clipboard write from the popup to prevent Chrome from blocking the Clipboard API.
 - **Title cleaning — ticket ID prefix:** Strips `[XXX-1234]` or `XXX-1234:` prefixes using regex `/^\[?[A-Z]+-\d+\]?\s*[:·-]?\s*/` when the "Include ticket ID" toggle is unchecked.
 - **Title cleaning — app suffixes:** Removes known app name suffixes (e.g. ` - Jira`, ` | GitHub`) from `document.title` when no selector matches.
-- **Keyboard shortcut:** `Ctrl+Shift+P` — registered via `commands` API in `manifest.json`, handled by `background.js` → `content.js` → clipboard write + toast.
+- **Keyboard shortcut:** `Ctrl+Shift+S` — registered via `commands` API in `manifest.json`, handled by `background.js` → `content.js` → clipboard write + toast.
 - **Toast notification:** Injected into the page DOM via `content.js` (not OS-level `chrome.notifications`). Fixed position bottom-right, `z-index: 999999`, 200ms fade-in / 300ms fade-out, dark theme matching popup.
 - **Popup width:** 320px (compact, tool-like).
 - **Unsupported domains:** `scripting.executeScript` dynamically injects a lightweight extractor that tries `<h1>` then `document.title`.
@@ -78,7 +78,7 @@ SnapLink/
 - **Word / Google Docs:** `Ctrl+V` works normally, pastes as a formatted hyperlink.
 - **Orange warning banner:** "⚠ Title not auto-detected" appears when falling back to `document.title`. This is informational — the title shown is still usable and can be edited manually.
 - **Jira CSS selectors** may become outdated when Atlassian updates their frontend. The `h1` fallback handles most cases.
-- **Alt+Shift+C** was the original shortcut in the manifest, but was changed to **Ctrl+Shift+P** manually via `chrome://extensions/shortcuts`. Chrome allows users to override extension shortcuts at any time.
+- **Alt+Shift+C** was the original shortcut in the manifest, but was changed to **Ctrl+Shift+S** via `chrome://extensions/shortcuts`. Chrome allows users to override extension shortcuts at any time.
 
 ---
 
@@ -114,6 +114,10 @@ SnapLink/
 - Registered `Ctrl+Shift+P` via `commands` API
 - Added `showToast()` in `content.js` (dark theme, fade in/out, bottom-right)
 - Independent `copyTicketLink` message handler — popup flow untouched
+
+### v1.3.0 — Keyboard shortcut fix
+- Changed shortcut from `Ctrl+Shift+P` to `Ctrl+Shift+S`
+- Reason: `Ctrl+Shift+P` conflicts with Chrome's native print dialog
 
 ---
 
@@ -156,4 +160,4 @@ Every time a change is made to SnapLink, update AGENTS.md:
 
 ## Last updated
 
-**Version:** 1.2.0 — **Date:** 2026-05-14
+**Version:** 1.3.0 — **Date:** 2026-05-15
