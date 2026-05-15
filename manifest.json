@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SnapLink",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Copy page URLs as rich links with the page title as display text — paste formatted links into Word, Excel, Notion, and more.",
   "permissions": [
     "activeTab",
@@ -29,8 +29,8 @@
   "commands": {
     "copy-ticket-link": {
       "suggested_key": {
-        "default": "Ctrl+Shift+S",
-        "mac": "Ctrl+Shift+S"
+        "default": "Ctrl+Shift+L",
+        "mac": "Ctrl+Shift+L"
       },
       "description": "Copy ticket as formatted link silently"
     }
