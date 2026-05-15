@@ -32,7 +32,9 @@ SnapLink/
 │   └── icon128.png
 ├── generate-icons.js   — Node.js helper to regenerate PNG icons from SVG using `sharp`
 ├── AGENTS.md           — This file (persistent memory document)
-└── README.md           — Installation guide, usage, how to add new platforms
+├── README.md           — Installation guide, usage, how to add new platforms
+├── LICENSE             — MIT License
+└── PRIVACY.md          — Privacy policy for the Chrome Web Store
 ```
 
 ---
