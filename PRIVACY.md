@@ -13,6 +13,7 @@ SnapLink operates entirely inside your browser:
 - It reads the page title and URL from the DOM of the active tab.
 - It writes a formatted hyperlink (HTML and plain text) to your system clipboard.
 - It injects a small toast notification on the page to confirm the copy.
+- It remembers one preference (the "Copy as Markdown" checkbox) in the popup's local browser storage. It never leaves your device.
 
 No network requests are made. No data is sent anywhere. Everything happens locally on your device.
 
@@ -36,4 +37,4 @@ Email: sidmaierlabs@gmail.com
 
 ---
 
-*Last updated: May 14, 2026*
+*Last updated: November 10, 2026*

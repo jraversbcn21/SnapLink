@@ -1,7 +1,7 @@
 /**
  * SnapLink — Background Service Worker
  *
- * Handles the Alt+Shift+C keyboard shortcut command.
+ * Handles the Ctrl+Shift+L keyboard shortcut command.
  * Receives the command from Chrome, finds the active tab,
  * and dispatches a "copyTicketLink" message to the content script
  * so it can extract the title, write to the clipboard, and show a toast.

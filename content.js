@@ -1,7 +1,8 @@
 /**
  * SnapLink — Content Script
  *
- * Injected into supported ticket‑platform pages.
+ * Injected into supported ticket‑platform pages, and on demand into any
+ * other page (popup / keyboard shortcut) via chrome.scripting.
  * Extracts the ticket / issue / task title from the DOM using
  * platform‑specific CSS selectors, with a generic fallback.
  *

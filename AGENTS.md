@@ -31,6 +31,8 @@ SnapLink/
 │   ├── icon48.png
 │   └── icon128.png
 ├── test.js             — `node test.js`: asserts for cleanUrl, cleanAppSuffix and title fallback order (loads content.js in a vm, no deps)
+├── package.json        — devDependency `sharp` (icon generation only)
+├── .gitignore          — node_modules/, *.zip
 ├── generate-icons.js   — Node.js helper to regenerate PNG icons from SVG using `sharp`
 ├── AGENTS.md           — This file (persistent memory document)
 ├── README.md           — Installation guide, usage, how to add new platforms
@@ -54,7 +56,7 @@ SnapLink/
 | **Asana** | `*.asana.com` | `[class*="TaskPane-taskName"]`, `textarea[aria-label*="Task Name"]` (reads `.value`) |
 | **Zendesk** | `*.zendesk.com` | `[data-test-id="ticket-title"]`, `.ticket-subject` |
 | **Shortcut** | `*.shortcut.com` | `[class*="story-name"]` |
-| **Generic fallback** | Any other URL | First `<h1>`, then `document.title` (cleaned of app suffixes) |
+| **Generic fallback** | Any other URL | `meta[property="og:title"]`, then first `<h1>`, then `document.title` (cleaned of app suffixes) |
 
 ---
 
@@ -68,7 +70,11 @@ SnapLink/
 - **Shortcut hint:** `popup.js` reads the user's actual binding via `chrome.commands.getAll` (no extra permission) and shows a tip under the copy button; if no shortcut is assigned, it points the user to `chrome://extensions/shortcuts` instead. Defaults to `Ctrl+Shift+L` in the HTML before the lookup resolves.
 - **Toast notification:** Injected into the page DOM via `content.js` (not OS-level `chrome.notifications`). Fixed position bottom-right, `z-index: 999999`, 200ms fade-in / 300ms fade-out, dark theme matching popup.
 - **Popup width:** 320px (compact, tool-like).
-- **Unsupported domains:** `scripting.executeScript` dynamically injects a lightweight extractor that tries `<h1>` then `document.title`.
+- **Unsupported domains:** `scripting.executeScript` injects `content.js` itself (popup and `background.js` both do this), so there is a single extractor: platform selectors → `og:title` → `<h1>` → `document.title`.
+- **URL cleaning:** `cleanUrl()` in `content.js` removes tracking params (`utm_*`, `fbclid`, `gclid`, `dclid`, `msclkid`, `yclid`, `igshid`, `mc_cid`, `mc_eid`, `_ga`, `_gl`) from every copied URL; other params are kept.
+- **Markdown mode:** popup checkbox (persisted in `localStorage`, key `snaplink.md`) copies plain text `[title](url)` only, escaping `[ ] \` in the title and `( )` in the URL. The keyboard shortcut ignores it and always copies the rich link.
+- **Tests:** `node test.js` loads `content.js` in a `vm` with stubbed globals (no framework). `popup.js` logic is not covered.
+- **Packaging:** `node_modules/` and `*.zip` are git-ignored. The Web Store zip contains only `manifest.json`, `content.js`, `background.js`, `popup.html`, `popup.css`, `popup.js`, `icons/*.png`.
 - **Content script timeout:** If `chrome.tabs.sendMessage` doesn't respond within 500ms, falls back to dynamic injection.
 - **`chrome://` pages:** Error state shown, copy button enabled for manual override.
 - **Jira self-hosted matching:** Uses a `match(href, hostname)` function (not just hostname globs) to detect `/browse/XXX-1234` URL patterns on any domain.
@@ -82,6 +88,7 @@ SnapLink/
 - **Word / Google Docs:** `Ctrl+V` works normally, pastes as a formatted hyperlink.
 - **Orange warning banner:** "⚠ Title not auto-detected" appears when falling back to `document.title`. This is informational — the title shown is still usable and can be edited manually.
 - **Jira CSS selectors** may become outdated when Atlassian updates their frontend. The `h1` fallback handles most cases.
+- **Double injection:** if the popup's 500ms timeout fires before a slow content script answers, `content.js` can be injected twice (two listeners, duplicate responses). Harmless today; guard with a `window.__snaplink` flag if it ever causes trouble.
 - **Alt+Shift+C** was the original shortcut in the manifest, but was changed to **Ctrl+Shift+L** via `chrome://extensions/shortcuts`. Chrome allows users to override extension shortcuts at any time.
 
 ---
@@ -94,8 +101,11 @@ SnapLink/
 | Screenshot | 1280×800px | SVG generated, PNG pending |
 | Marquee image | 1400×560px | SVG generated, PNG pending |
 
-- **Developer account:** Pending $5 registration fee.
-- **Store submission:** Not yet submitted.
+(Listing already live; assets above only matter if the store requires updates.)
+
+- **Developer account:** Registered ($5 fee paid).
+- **Store status:** Extension published; v1.6.0 package submitted and **in review** (as of 2026-11-10). Package: `SnapLink-1.6.0.zip` (git-ignored, built outside the repo).
+- **Privacy policy URL (store field):** `https://github.com/jraversbcn21/SnapLink/blob/master/PRIVACY.md` — must stay reachable or the store blocks publishing ("Privacy policy link is not reachable"). Do not rename/delete `PRIVACY.md` or make the repo private.
 
 ---
 
@@ -186,6 +196,23 @@ Every time a change is made to SnapLink, update AGENTS.md:
 - Add new edge cases to section 5 if discovered
 - Update section 6 if new store assets are created
 - Add a new entry to the changelog in section 7
+
+---
+
+## 10. Roadmap — possible future improvements
+
+Ordered by suggested priority:
+
+1. Keyboard shortcut honors the Markdown option (today it always copies the rich link).
+2. Right-click context menu to copy any link on a page (needs `contextMenus`; title would be the link text).
+3. Copy all open tabs as a list of links.
+4. Custom output template (e.g. `[ID] title`).
+5. History of recently copied links.
+6. More output formats (Slack, Jira wiki markup).
+7. Move `popup.js` pure helpers (`stripTicketId`, Markdown escaping) to a shared module so `test.js` can cover them.
+8. Localized shortcut names beyond Spanish in the popup hint (currently only `Mayús`→`Shift`).
+9. `window.__snaplink` guard against double injection of `content.js`.
+10. Chrome Web Store assets: convert SVG promo/screenshot/marquee to PNG.
 
 ---
 
