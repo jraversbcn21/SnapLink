@@ -30,6 +30,7 @@ SnapLink/
 │   ├── icon32.png
 │   ├── icon48.png
 │   └── icon128.png
+├── test.js             — `node test.js`: asserts for cleanUrl, cleanAppSuffix and title fallback order (loads content.js in a vm, no deps)
 ├── generate-icons.js   — Node.js helper to regenerate PNG icons from SVG using `sharp`
 ├── AGENTS.md           — This file (persistent memory document)
 ├── README.md           — Installation guide, usage, how to add new platforms
@@ -129,6 +130,7 @@ SnapLink/
 ### v1.6.0 — Markdown output
 - Popup checkbox "Copy as Markdown [title](url)" (remembered in `localStorage`); copies plain text only, escaping `[ ] \` in the title and `( )` in the URL
 - The `Ctrl+Shift+L` shortcut still copies the rich link (HTML + plain)
+- Added `test.js` (no extension change): run `node test.js` after editing `content.js`
 
 ### v1.5.0 — Works on any URL
 - Title fallback order is now: platform selectors → `og:title` → `<h1>` → cleaned `document.title`; added `—` as a suffix separator
