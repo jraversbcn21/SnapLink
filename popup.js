@@ -323,6 +323,14 @@
     }, 400);
   });
 
+  // ─── Shortcut hint (reads the user's actual binding) ─────────────────
+  chrome.commands.getAll(function (cmds) {
+    var cmd = (cmds || []).filter(function (c) { return c.name === "copy-ticket-link"; })[0];
+    if (!cmd || !cmd.shortcut) return;
+    document.getElementById("shortcutKey").textContent = cmd.shortcut;
+    document.getElementById("shortcutHint").classList.remove("hidden");
+  });
+
   // ─── Initialise ──────────────────────────────────────────────────────
   fetchTicketInfo();
 })();

@@ -7,7 +7,7 @@ This document provides full context for the SnapLink Chrome extension so any AI 
 ## 1. Project overview
 
 - **Extension name:** SnapLink
-- **Version:** 1.3.1
+- **Version:** 1.4.0
 - **Purpose:** Copy ticket URLs from Jira, Linear, GitHub, and other platforms as formatted hyperlinks (HTML + plain text) to the clipboard. When pasted into Word, Excel, Google Docs, or Notion, they appear as clickable links with the ticket title as display text — never raw URLs.
 - **Repository:** `https://github.com/jraversbcn21/SnapLink.git`
 - **Branch:** `master`
@@ -64,6 +64,7 @@ SnapLink/
 - **Title cleaning — ticket ID prefix:** Strips `[XXX-1234]` or `XXX-1234:` prefixes using regex `/^\[?[A-Z]+-\d+\]?\s*[:·-]?\s*/` when the "Include ticket ID" toggle is unchecked.
 - **Title cleaning — app suffixes:** Removes known app name suffixes (e.g. ` - Jira`, ` | GitHub`) from `document.title` when no selector matches.
 - **Keyboard shortcut:** `Ctrl+Shift+L` — registered via `commands` API in `manifest.json`, handled by `background.js` → `content.js` → clipboard write + toast.
+- **Shortcut hint:** `popup.js` reads the user's actual binding via `chrome.commands.getAll` (no extra permission) and shows a tip under the copy button; hidden if no shortcut is assigned.
 - **Toast notification:** Injected into the page DOM via `content.js` (not OS-level `chrome.notifications`). Fixed position bottom-right, `z-index: 999999`, 200ms fade-in / 300ms fade-out, dark theme matching popup.
 - **Popup width:** 320px (compact, tool-like).
 - **Unsupported domains:** `scripting.executeScript` dynamically injects a lightweight extractor that tries `<h1>` then `document.title`.
@@ -125,6 +126,11 @@ SnapLink/
 - Changed shortcut from `Ctrl+Shift+S` to `Ctrl+Shift+L`
 - Reason: `Ctrl+Shift+S` was set incorrectly in v1.3.0; correct shortcut is `Ctrl+Shift+L`
 
+### v1.4.0 — Shortcut discoverability
+- Popup shows a "Tip: ... Ctrl+Shift+L" hint under the copy button
+- Hint reflects the user's real shortcut (rebinding in `chrome://extensions/shortcuts` is picked up)
+- Removed duplicate `privacy-policy.md` (kept `PRIVACY.md`)
+
 ---
 
 ## 8. How to add a new platform
@@ -166,4 +172,4 @@ Every time a change is made to SnapLink, update AGENTS.md:
 
 ## Last updated
 
-**Version:** 1.3.1 — **Date:** 2026-05-15
+**Version:** 1.4.0 — **Date:** 2026-11-10
