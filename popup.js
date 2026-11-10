@@ -328,7 +328,8 @@
     var cmd = (cmds || []).filter(function (c) { return c.name === "copy-ticket-link"; })[0];
     if (!cmd) return;
     if (cmd.shortcut) {
-      document.getElementById("shortcutKey").textContent = cmd.shortcut;
+      document.getElementById("shortcutKey").textContent =
+        cmd.shortcut.replace(/May[uú]s/i, "Shift");
     } else {
       document.getElementById("shortcutHint").textContent =
         "Tip: set a keyboard shortcut in chrome://extensions/shortcuts";

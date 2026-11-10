@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SnapLink",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Copy page URLs as rich links with the page title as display text — paste formatted links into Word, Excel, Notion, and more.",
   "permissions": [
     "activeTab",
