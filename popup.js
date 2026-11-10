@@ -17,6 +17,13 @@
   var copyBtn         = document.getElementById("copyBtn");
   var sourceNote      = document.getElementById("sourceNote");
   var includeTicketId = document.getElementById("includeTicketId");
+  var asMarkdown      = document.getElementById("asMarkdown");
+
+  // Remember the Markdown choice (storage may be unavailable → ignore)
+  try { asMarkdown.checked = localStorage.getItem("snaplink.md") === "1"; } catch (_) {}
+  asMarkdown.addEventListener("change", function () {
+    try { localStorage.setItem("snaplink.md", asMarkdown.checked ? "1" : "0"); } catch (_) {}
+  });
 
   // ─── State ──────────────────────────────────────────────────────────
   var ticketInfo = null;   // { url, title, platform, source, hostname }
@@ -190,11 +197,18 @@
     var html = '<a href="' + safeUrl + '">' + safeTitle + "</a>";
     var plain = title + " - " + url;
 
+    // Markdown: plain text only, so every surface pastes the raw [title](url)
+    if (asMarkdown.checked) {
+      plain = "[" + title.replace(/([\[\]\\])/g, "\\$1") + "](" +
+              url.replace(/\(/g, "%28").replace(/\)/g, "%29") + ")";
+      html = null;
+    }
+
     // Force focus so Chrome allows clipboard write from the popup window
     window.focus();
 
     try {
-      if (typeof ClipboardItem !== "undefined") {
+      if (html && typeof ClipboardItem !== "undefined") {
         // Rich copy: HTML + plain text simultaneously
         await navigator.clipboard.write([
           new ClipboardItem({
@@ -205,7 +219,7 @@
       } else {
         // Fallback: plain text only (older browsers that lack ClipboardItem)
         await navigator.clipboard.writeText(plain);
-        showWarning("Rich format not supported in this browser. Plain text copied.");
+        if (html) showWarning("Rich format not supported in this browser. Plain text copied.");
       }
       showCopiedFeedback();
     } catch (err) {
