@@ -7,7 +7,7 @@ This document provides full context for the SnapLink Chrome extension so any AI 
 ## 1. Project overview
 
 - **Extension name:** SnapLink
-- **Version:** 1.4.2
+- **Version:** 1.5.0
 - **Purpose:** Copy ticket URLs from Jira, Linear, GitHub, and other platforms as formatted hyperlinks (HTML + plain text) to the clipboard. When pasted into Word, Excel, Google Docs, or Notion, they appear as clickable links with the ticket title as display text — never raw URLs.
 - **Repository:** `https://github.com/jraversbcn21/SnapLink.git`
 - **Branch:** `master`
@@ -126,6 +126,12 @@ SnapLink/
 - Changed shortcut from `Ctrl+Shift+S` to `Ctrl+Shift+L`
 - Reason: `Ctrl+Shift+S` was set incorrectly in v1.3.0; correct shortcut is `Ctrl+Shift+L`
 
+### v1.5.0 — Works on any URL
+- Title fallback order is now: platform selectors → `og:title` → `<h1>` → cleaned `document.title`; added `—` as a suffix separator
+- URL is cleaned of tracking params (`utm_*`, `fbclid`, `gclid`, `msclkid`, etc.) in `content.js` `cleanUrl()`
+- Popup fallback on unsupported domains now injects `content.js` and messages it, instead of a duplicate inline extractor (one extractor for popup and shortcut)
+- The shortcut already injected `content.js` on demand via `activeTab`, so it works on any site
+
 ### v1.4.2 — Shortcut hint shows "Shift"
 - Chrome returns the shortcut with localized key names (e.g. `Ctrl+Mayús+L` in Spanish); `popup.js` now replaces `Mayús`/`Mayus` with `Shift` so the hint matches `Ctrl+Shift+L`
 
@@ -179,4 +185,4 @@ Every time a change is made to SnapLink, update AGENTS.md:
 
 ## Last updated
 
-**Version:** 1.4.2 — **Date:** 2026-11-10
+**Version:** 1.5.0 — **Date:** 2026-11-10

@@ -64,6 +64,7 @@
     // Source note
     var sourceLabels = {
       "selector":       "Detected from page element",
+      "og:title":       "Detected from page og:title",
       "h1":             "Detected from page <h1>",
       "document.title": "Falling back to page title"
     };
@@ -148,63 +149,22 @@
   }
 
   // ─── Dynamic injection fallback for unsupported domains ──────────────
+  // Injects the same content.js (single extractor: og:title, h1, URL cleaning)
   function injectAndRetry(tab) {
     chrome.scripting.executeScript(
-      {
-        target: { tabId: tab.id },
-        func: function () {
-          // Minimal inline extractor — no external dependencies
-          var title = "";
-          var platform = "Generic";
-          var source = "document.title";
-
-          // Try first <h1>
-          try {
-            var h1 = document.querySelector("h1");
-            if (h1 && h1.textContent.trim()) {
-              title = h1.textContent.trim();
-              source = "h1";
-            }
-          } catch (_) {}
-
-          // Fall back to document.title
-          if (!title) {
-            var t = document.title || "";
-            // Strip common suffixes
-            var seps = [" - ", " | ", " \u2013 ", " \u00b7 "];
-            for (var i = 0; i < seps.length; i++) {
-              var idx = t.indexOf(seps[i]);
-              if (idx > 0) {
-                var suffix = t.slice(idx + seps[i].length).trim();
-                if (suffix.length <= 20) {
-                  t = t.slice(0, idx).trim();
-                  break;
-                }
-              }
-            }
-            title = t;
-          }
-
-          return {
-            url: window.location.href,
-            title: title,
-            platform: platform,
-            source: source,
-            hostname: window.location.hostname
-          };
-        }
-      },
-      function (results) {
-        if (chrome.runtime.lastError || !results || !results[0]) {
+      { target: { tabId: tab.id }, files: ["content.js"] },
+      function () {
+        if (chrome.runtime.lastError) {
           showError("Failed to read page. Try refreshing the page.");
           return;
         }
-        var result = results[0].result;
-        if (result && result.url) {
-          render(result);
-        } else {
-          showError("Could not extract page data.");
-        }
+        chrome.tabs.sendMessage(tab.id, { action: "getTicketInfo" }, function (response) {
+          if (chrome.runtime.lastError || !response || !response.url) {
+            showError("Could not extract page data.");
+            return;
+          }
+          render(response);
+        });
       }
     );
   }

@@ -165,7 +165,7 @@
     ];
 
     // Try each separator; if the right‑hand side is a known app name, strip it
-    var separators = [" - ", " | ", " \u2013 ", " \u00b7 "]; // – and ·
+    var separators = [" - ", " | ", " \u2013 ", " \u2014 ", " \u00b7 "]; // – and ·
     for (var s = 0; s < separators.length; s++) {
       var sep = separators[s];
       var idx = text.indexOf(sep);
@@ -185,6 +185,21 @@
     }
 
     return text.trim();
+  }
+
+  // ─── Helper: drop tracking params (utm_*, fbclid, gclid…) from the URL ─
+  var TRACKING_PARAM = /^(utm_.*|fbclid|gclid|dclid|msclkid|yclid|igshid|mc_[ce]id|_ga|_gl)$/i;
+
+  function cleanUrl(href) {
+    try {
+      var u = new URL(href);
+      Array.from(u.searchParams.keys()).forEach(function (k) {
+        if (TRACKING_PARAM.test(k)) u.searchParams.delete(k);
+      });
+      return u.href;
+    } catch (_) {
+      return href;
+    }
   }
 
   // ─── Core: extract title from the DOM ────────────────────────────────
@@ -234,6 +249,16 @@
       }
     }
 
+    // Generic fallback: Open Graph title (what sites choose for sharing)
+    if (!title) {
+      var og = document.querySelector('meta[property="og:title"]');
+      var ogText = og && (og.content || "").trim();
+      if (ogText) {
+        title = ogText;
+        source = "og:title";
+      }
+    }
+
     // Generic fallback: first <h1> on the page
     if (!title) {
       platform = platform || "Generic";
@@ -259,7 +284,7 @@
       title: title,
       platform: platform,
       source: source,
-      url: window.location.href,
+      url: cleanUrl(href),
       hostname: hostname
     };
   }
