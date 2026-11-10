@@ -37,7 +37,8 @@ SnapLink/
 ├── AGENTS.md           — This file (persistent memory document)
 ├── README.md           — Installation guide, usage, how to add new platforms
 ├── LICENSE             — MIT License
-└── PRIVACY.md          — Privacy policy for the Chrome Web Store
+├── PRIVACY.md          — Privacy policy for the Chrome Web Store
+└── STORE_LISTING.md    — Store description text (keyword-spam-safe); paste into the Developer Dashboard
 ```
 
 ---
@@ -104,7 +105,7 @@ SnapLink/
 (Listing already live; assets above only matter if the store requires updates.)
 
 - **Developer account:** Registered ($5 fee paid).
-- **Store status:** Extension published; v1.6.0 package submitted and **in review** (as of 2026-11-10). Package: `SnapLink-1.6.0.zip` (git-ignored, built outside the repo).
+- **Store status:** Extension published; v1.6.0 package was **rejected on 2026-11-10** for "Keyword Spam" (ref. Yellow Argon): the store description listed ten platform names ("Jira, Linear, GitHub, GitLab, Trello, ..."). The package/manifest were fine; the fix is in the Dashboard description only. Use the text in `STORE_LISTING.md` (max 2–3 brand names, in a sentence) and resubmit; also check title, screenshots and promo images for brand lists. Package: `SnapLink-1.6.0.zip` (git-ignored, built outside the repo).
 - **Privacy policy URL (store field):** `https://github.com/jraversbcn21/SnapLink/blob/master/PRIVACY.md` — must stay reachable or the store blocks publishing ("Privacy policy link is not reachable"). Do not rename/delete `PRIVACY.md` or make the repo private.
 
 ---
@@ -136,6 +137,10 @@ SnapLink/
 ### v1.3.1 — Keyboard shortcut correction
 - Changed shortcut from `Ctrl+Shift+S` to `Ctrl+Shift+L`
 - Reason: `Ctrl+Shift+S` was set incorrectly in v1.3.0; correct shortcut is `Ctrl+Shift+L`
+
+### 2026-11-10 — Store rejection (no version change)
+- v1.6.0 rejected for Keyword Spam in the store description (list of platform names)
+- Added `STORE_LISTING.md` with a compliant description; no code changes
 
 ### v1.6.0 — Markdown output
 - Popup checkbox "Copy as Markdown [title](url)" (remembered in `localStorage`); copies plain text only, escaping `[ ] \` in the title and `( )` in the URL
