@@ -48,4 +48,27 @@ assert.deepStrictEqual([noOg.title, noOg.source], ["Heading", "h1"]);
 const onlyDoc = load("https://x.com/", { title: "Doc title - X" }).extractTitle();
 assert.deepStrictEqual([onlyDoc.title, onlyDoc.source], ["Doc title", "document.title"]);
 
+// Double-injection guard: second run on the same page registers no listener
+let listeners = 0;
+const page = {
+  URL,
+  window: { location: new URL("https://x.com/") },
+  document: { title: "", querySelector: () => null, querySelectorAll: () => [] },
+  chrome: { runtime: { onMessage: { addListener() { listeners++; } } } }
+};
+const raw = fs.readFileSync(__dirname + "/content.js", "utf8");
+vm.runInNewContext(raw, page);
+vm.runInNewContext(raw, page);
+assert.strictEqual(listeners, 1);
+
+// Platform hostname globs still match (precompiled regexes)
+const jira = load("https://acme.atlassian.net/browse/AB-1", {
+  querySelectorAll: (s) => (s === "h1" ? [{ textContent: "Jira issue" }] : [])
+}).extractTitle();
+assert.deepStrictEqual([jira.platform, jira.title], ["Jira", "Jira issue"]);
+const gl = load("https://gitlab.com/g/p/-/issues/1", {
+  querySelectorAll: (s) => (s === "h1.title" ? [{ textContent: "GL issue" }] : [])
+}).extractTitle();
+assert.deepStrictEqual([gl.platform, gl.title], ["GitLab", "GL issue"]);
+
 console.log("all tests passed");

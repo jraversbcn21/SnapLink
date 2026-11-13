@@ -1,27 +1,12 @@
 {
   "manifest_version": 3,
   "name": "SnapLink",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Copy page URLs as rich links with the page title as display text — paste formatted links into Word, Excel, Notion, and more.",
   "permissions": [
     "activeTab",
     "scripting",
     "clipboardWrite"
-  ],
-  "host_permissions": [
-    "*://*.atlassian.net/*",
-    "*://*.atlassian.com/*",
-    "https://jira.inditex.com/*",
-    "*://*.linear.app/*",
-    "*://github.com/*",
-    "*://gitlab.com/*",
-    "*://*.gitlab.com/*",
-    "*://trello.com/*",
-    "*://notion.so/*",
-    "*://*.clickup.com/*",
-    "*://*.asana.com/*",
-    "*://*.zendesk.com/*",
-    "*://*.shortcut.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -50,26 +35,5 @@
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "*://*.atlassian.net/*",
-        "*://*.atlassian.com/*",
-        "https://jira.inditex.com/*",
-        "*://*.linear.app/*",
-        "*://github.com/*",
-        "*://gitlab.com/*",
-        "*://*.gitlab.com/*",
-        "*://trello.com/*",
-        "*://notion.so/*",
-        "*://*.clickup.com/*",
-        "*://*.asana.com/*",
-        "*://*.zendesk.com/*",
-        "*://*.shortcut.com/*"
-      ],
-      "js": ["content.js"],
-      "run_at": "document_idle"
-    }
-  ]
+  }
 }

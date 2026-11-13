@@ -2,9 +2,10 @@
  * SnapLink — Background Service Worker
  *
  * Handles the Ctrl+Shift+L keyboard shortcut command.
- * Receives the command from Chrome, finds the active tab,
- * and dispatches a "copyTicketLink" message to the content script
- * so it can extract the title, write to the clipboard, and show a toast.
+ * Receives the command from Chrome, injects content.js into the active tab
+ * (allowed by activeTab; a no-op if it is already there) and dispatches a
+ * "copyTicketLink" message so it can extract the title, write to the
+ * clipboard, and show a toast.
  *
  * The background worker itself does NOT access the clipboard or the DOM —
  * all clipboard and DOM operations happen in the content script context.
@@ -24,32 +25,17 @@ chrome.commands.onCommand.addListener(function (command) {
     // Skip browser system pages (chrome://, edge://, about://)
     if (/^(chrome|edge|about):\/\//i.test(tab.url || "")) return;
 
-    // Send message to content script; handle missing listener gracefully
-    chrome.tabs.sendMessage(
-      tab.id,
-      { action: "copyTicketLink" },
-      function (response) {
-        // If content script was not yet injected (e.g. the tab was opened
-        // before the extension was installed/reloaded), inject it and retry
-        if (chrome.runtime.lastError) {
-          chrome.scripting.executeScript(
-            {
-              target: { tabId: tab.id },
-              files: ["content.js"]
-            },
-            function () {
-              if (chrome.runtime.lastError) return;
-              // Retry sending the message after a short delay for the
-              // content script to initialise
-              setTimeout(function () {
-                chrome.tabs.sendMessage(tab.id, { action: "copyTicketLink" });
-              }, 150);
-            }
-          );
-        }
-        // On success or injection failure, we intentionally swallow errors.
-        // The user will see the toast on success or nothing on failure,
-        // and they can always fall back to the popup UI.
+    // executeScript calls back once content.js has run, so its message
+    // listener is already registered — no delay needed before messaging.
+    chrome.scripting.executeScript(
+      { target: { tabId: tab.id }, files: ["content.js"] },
+      function () {
+        // Injection fails on protected pages (e.g. the Web Store): swallow it,
+        // the user can still fall back to the popup UI.
+        if (chrome.runtime.lastError) return;
+        chrome.tabs.sendMessage(tab.id, { action: "copyTicketLink" }, function () {
+          void chrome.runtime.lastError; // silence "no receiver" warnings
+        });
       }
     );
   });

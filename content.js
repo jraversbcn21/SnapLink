@@ -1,8 +1,8 @@
 /**
  * SnapLink — Content Script
  *
- * Injected into supported ticket‑platform pages, and on demand into any
- * other page (popup / keyboard shortcut) via chrome.scripting.
+ * Injected on demand (popup / keyboard shortcut) via chrome.scripting
+ * under the activeTab permission; never loaded on pages unless the user acts.
  * Extracts the ticket / issue / task title from the DOM using
  * platform‑specific CSS selectors, with a generic fallback.
  *
@@ -13,6 +13,11 @@
 
 (function () {
   "use strict";
+
+  // Popup and shortcut inject this file on every use; run only once per page
+  // so repeated injections don't stack duplicate message listeners.
+  if (window.__snaplink) return;
+  window.__snaplink = true;
 
   // ─── Platform definitions ────────────────────────────────────────────
   // Each entry maps a platform key to an object with:
@@ -138,17 +143,20 @@
   ];
 
   // ─── Helper: match hostname against glob patterns ────────────────────
-  function matchesHostname(patterns, hostname) {
-    for (var i = 0; i < patterns.length; i++) {
-      var p = patterns[i];
+  // Globs are compiled to regexes once, when the script loads.
+  PLATFORMS.forEach(function (p) {
+    p.hostRegexes = (p.patterns || []).map(function (glob) {
       // Convert glob to regex: escape dots, replace * with .*
-      var regex = new RegExp(
-        "^" + p.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$",
+      return new RegExp(
+        "^" + glob.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$",
         "i"
       );
-      if (regex.test(hostname)) {
-        return true;
-      }
+    });
+  });
+
+  function matchesHostname(regexes, hostname) {
+    for (var i = 0; i < regexes.length; i++) {
+      if (regexes[i].test(hostname)) return true;
     }
     return false;
   }
@@ -219,8 +227,8 @@
       // Use custom match function if provided, otherwise fall back to hostname patterns
       if (typeof p.match === "function") {
         isMatch = p.match(href, hostname);
-      } else if (p.patterns) {
-        isMatch = matchesHostname(p.patterns, hostname);
+      } else {
+        isMatch = matchesHostname(p.hostRegexes, hostname);
       }
 
       if (isMatch) {

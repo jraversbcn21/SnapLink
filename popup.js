@@ -125,39 +125,14 @@
         return;
       }
 
-      // Try sending a message to the already‑injected content script
-      var responded = false;
-
-      chrome.tabs.sendMessage(
-        tab.id,
-        { action: "getTicketInfo" },
-        function (response) {
-          responded = true;
-          if (chrome.runtime.lastError) {
-            // Content script not ready — inject it dynamically, then retry
-            injectAndRetry(tab);
-            return;
-          }
-          if (response && response.url) {
-            render(response);
-          } else {
-            showError("Empty response from content script.");
-          }
-        }
-      );
-
-      // Safety timeout: if sendMessage never calls back, fall back
-      setTimeout(function () {
-        if (!responded) {
-          injectAndRetry(tab);
-        }
-      }, 500);
+      injectAndFetch(tab);
     });
   }
 
-  // ─── Dynamic injection fallback for unsupported domains ──────────────
-  // Injects the same content.js (single extractor: og:title, h1, URL cleaning)
-  function injectAndRetry(tab) {
+  // ─── Inject content.js (no‑op if already there), then ask for info ───
+  // No static content_scripts: opening the popup grants activeTab, and
+  // content.js guards itself against double injection.
+  function injectAndFetch(tab) {
     chrome.scripting.executeScript(
       { target: { tabId: tab.id }, files: ["content.js"] },
       function () {

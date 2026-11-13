@@ -7,7 +7,7 @@ This document provides full context for the SnapLink Chrome extension so any AI 
 ## 1. Project overview
 
 - **Extension name:** SnapLink
-- **Version:** 1.6.0
+- **Version:** 1.7.0
 - **Purpose:** Copy ticket URLs from Jira, Linear, GitHub, and other platforms as formatted hyperlinks (HTML + plain text) to the clipboard. When pasted into Word, Excel, Google Docs, or Notion, they appear as clickable links with the ticket title as display text — never raw URLs.
 - **Repository:** `https://github.com/jraversbcn21/SnapLink.git`
 - **Branch:** `master`
@@ -18,7 +18,7 @@ This document provides full context for the SnapLink Chrome extension so any AI 
 
 ```
 SnapLink/
-├── manifest.json       — MV3 manifest, permissions, content_scripts, commands, background worker
+├── manifest.json       — MV3 manifest, permissions (activeTab, scripting, clipboardWrite), commands, background worker — no content_scripts / host_permissions
 ├── content.js          — DOM title extraction per platform, toast notification, clipboard write
 ├── popup.html          — 320px dark UI, editable title input, platform badge, copy button
 ├── popup.css           — Dark theme #0f1117, monospaced typography, platform badge colors
@@ -76,7 +76,9 @@ SnapLink/
 - **Markdown mode:** popup checkbox (persisted in `localStorage`, key `snaplink.md`) copies plain text `[title](url)` only, escaping `[ ] \` in the title and `( )` in the URL. The keyboard shortcut ignores it and always copies the rich link.
 - **Tests:** `node test.js` loads `content.js` in a `vm` with stubbed globals (no framework). `popup.js` logic is not covered.
 - **Packaging:** `node_modules/` and `*.zip` are git-ignored. The Web Store zip contains only `manifest.json`, `content.js`, `background.js`, `popup.html`, `popup.css`, `popup.js`, `icons/*.png`.
-- **Content script timeout:** If `chrome.tabs.sendMessage` doesn't respond within 500ms, falls back to dynamic injection.
+- **On-demand injection only (v1.7.0):** no `content_scripts` and no `host_permissions` in the manifest. Popup and `background.js` always call `scripting.executeScript(content.js)` under `activeTab`, then `sendMessage` in the callback (the listener is already registered, so no delay/timeout). Platform detection still uses `PLATFORMS` by hostname/URL, so adding a platform needs no manifest change.
+- **Injection guard:** `content.js` sets `window.__snaplink` and returns early on re-injection, so repeated popup/shortcut uses never stack listeners.
+- **Host globs precompiled:** `PLATFORMS[i].patterns` are compiled once to `hostRegexes` at script load.
 - **`chrome://` pages:** Error state shown, copy button enabled for manual override.
 - **Jira self-hosted matching:** Uses a `match(href, hostname)` function (not just hostname globs) to detect `/browse/XXX-1234` URL patterns on any domain.
 - **Platform matching:** Each platform entry can have either `patterns` (hostname globs), a custom `match(href, hostname)` function (for Jira), or both.
@@ -89,7 +91,6 @@ SnapLink/
 - **Word / Google Docs:** `Ctrl+V` works normally, pastes as a formatted hyperlink.
 - **Orange warning banner:** "⚠ Title not auto-detected" appears when falling back to `document.title`. This is informational — the title shown is still usable and can be edited manually.
 - **Jira CSS selectors** may become outdated when Atlassian updates their frontend. The `h1` fallback handles most cases.
-- **Double injection:** if the popup's 500ms timeout fires before a slow content script answers, `content.js` can be injected twice (two listeners, duplicate responses). Harmless today; guard with a `window.__snaplink` flag if it ever causes trouble.
 - **Alt+Shift+C** was the original shortcut in the manifest, but was changed to **Ctrl+Shift+L** via `chrome://extensions/shortcuts`. Chrome allows users to override extension shortcuts at any time.
 
 ---
@@ -138,6 +139,13 @@ SnapLink/
 - Changed shortcut from `Ctrl+Shift+S` to `Ctrl+Shift+L`
 - Reason: `Ctrl+Shift+S` was set incorrectly in v1.3.0; correct shortcut is `Ctrl+Shift+L`
 
+### v1.7.0 — Performance and fewer permissions
+- Removed `content_scripts` and `host_permissions`: `content.js` is injected only when the user opens the popup or presses the shortcut (zero cost on other page loads)
+- Popup injects then messages directly (removed the sendMessage-first + 500ms timeout path)
+- Shortcut: removed the fixed 150ms wait after injection
+- `window.__snaplink` guard against double injection; hostname globs precompiled
+- `test.js` covers the guard and platform matching
+
 ### 2026-11-10 — Store rejection (no version change)
 - v1.6.0 rejected for Keyword Spam in the store description (list of platform names)
 - Added `STORE_LISTING.md` with a compliant description; no code changes
@@ -171,9 +179,7 @@ SnapLink/
 
 Three steps to extend SnapLink to any new ticket system:
 
-1. **Add the domain** to both `host_permissions` and `content_scripts[0].matches` in `manifest.json`.
-
-2. **Add a platform entry** to the `PLATFORMS` array in `content.js`:
+1. **Add a platform entry** to the `PLATFORMS` array in `content.js`:
    ```js
    {
      key: "YourPlatform",
@@ -184,7 +190,7 @@ Three steps to extend SnapLink to any new ticket system:
    ```
    Optionally provide a `match(href, hostname)` function if the platform can't be identified by hostname alone.
 
-3. **Reload** the extension in `chrome://extensions/`.
+2. **Reload** the extension in `chrome://extensions/`.
 
 Optionally add a `.badge-*` CSS class in `popup.css` for a matching platform badge color.
 
@@ -216,11 +222,10 @@ Ordered by suggested priority:
 6. More output formats (Slack, Jira wiki markup).
 7. Move `popup.js` pure helpers (`stripTicketId`, Markdown escaping) to a shared module so `test.js` can cover them.
 8. Localized shortcut names beyond Spanish in the popup hint (currently only `Mayús`→`Shift`).
-9. `window.__snaplink` guard against double injection of `content.js`.
-10. Chrome Web Store assets: convert SVG promo/screenshot/marquee to PNG.
+9. Chrome Web Store assets: convert SVG promo/screenshot/marquee to PNG.
 
 ---
 
 ## Last updated
 
-**Version:** 1.6.0 — **Date:** 2026-11-10
+**Version:** 1.7.0 — **Date:** 2026-11-13

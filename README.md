@@ -78,8 +78,7 @@ If the title cannot be detected, the toast warns: "Title not detected -- open Sn
 
 ## How to add a new platform
 
-1. Add the domain to both `host_permissions` and `content_scripts[0].matches` in `manifest.json`.
-2. Add a new entry to the `PLATFORMS` array in `content.js`:
+1. Add a new entry to the `PLATFORMS` array in `content.js`:
    ```js
    {
      key: "YourPlatform",
@@ -89,7 +88,7 @@ If the title cannot be detected, the toast warns: "Title not detected -- open Sn
    }
    ```
    Optionally provide a `match(href, hostname)` function if the platform cannot be identified by hostname alone (as done for self-hosted Jira instances).
-3. Reload the extension in `chrome://extensions/`.
+2. Reload the extension in `chrome://extensions/`.
 
 ## Development
 
@@ -101,7 +100,7 @@ If the title cannot be detected, the toast warns: "Title not detected -- open Sn
 
 ```
 SnapLink/
-├── manifest.json       -- MV3 manifest, permissions, content_scripts, commands, background worker
+├── manifest.json       -- MV3 manifest, permissions (activeTab, scripting, clipboardWrite), commands, background worker
 ├── content.js          -- Title extraction, URL cleaning, toast notification, clipboard write
 ├── popup.html          -- 320px dark UI, editable title, platform badge, toggles, copy button
 ├── popup.css           -- Dark theme, monospaced typography, platform badge colors
@@ -129,6 +128,11 @@ SnapLink/
 - Localized shortcut names beyond Spanish in the popup hint.
 
 ## Changelog
+
+### v1.7.0 -- Faster and fewer permissions
+- `content.js` is no longer loaded on every page of the supported platforms; it is injected only when you open the popup or press the shortcut
+- No host permissions requested anymore (only `activeTab`, `scripting`, `clipboardWrite`)
+- Keyboard shortcut no longer waits 150 ms on pages where SnapLink had not run yet
 
 ### v1.6.0 -- Markdown output
 - "Copy as Markdown" option in the popup, remembered between sessions
