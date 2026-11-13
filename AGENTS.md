@@ -71,7 +71,7 @@ SnapLink/
 - **Shortcut hint:** `popup.js` reads the user's actual binding via `chrome.commands.getAll` (no extra permission) and shows a tip under the copy button; if no shortcut is assigned, it points the user to `chrome://extensions/shortcuts` instead. Defaults to `Ctrl+Shift+L` in the HTML before the lookup resolves.
 - **Toast notification:** Injected into the page DOM via `content.js` (not OS-level `chrome.notifications`). Fixed position bottom-right, `z-index: 999999`, 200ms fade-in / 300ms fade-out, dark theme matching popup.
 - **Popup width:** 320px (compact, tool-like).
-- **Unsupported domains:** `scripting.executeScript` injects `content.js` itself (popup and `background.js` both do this), so there is a single extractor: platform selectors → `og:title` → `<h1>` → `document.title`.
+- **Single extractor on every site:** `scripting.executeScript` injects `content.js` (popup and `background.js` both do this, for supported and unsupported domains alike), so there is a single extractor: platform selectors → `og:title` → `<h1>` → `document.title`.
 - **URL cleaning:** `cleanUrl()` in `content.js` removes tracking params (`utm_*`, `fbclid`, `gclid`, `dclid`, `msclkid`, `yclid`, `igshid`, `mc_cid`, `mc_eid`, `_ga`, `_gl`) from every copied URL; other params are kept.
 - **Markdown mode:** popup checkbox (persisted in `localStorage`, key `snaplink.md`) copies plain text `[title](url)` only, escaping `[ ] \` in the title and `( )` in the URL. The keyboard shortcut ignores it and always copies the rich link.
 - **Tests:** `node test.js` loads `content.js` in a `vm` with stubbed globals (no framework). `popup.js` logic is not covered.
@@ -106,7 +106,7 @@ SnapLink/
 (Listing already live; assets above only matter if the store requires updates.)
 
 - **Developer account:** Registered ($5 fee paid).
-- **Store status:** Extension published; v1.6.0 package was **rejected on 2026-11-10** for "Keyword Spam" (ref. Yellow Argon): the store description listed ten platform names ("Jira, Linear, GitHub, GitLab, Trello, ..."). The package/manifest were fine; the fix is in the Dashboard description only. Use the text in `STORE_LISTING.md` (max 2–3 brand names, in a sentence) and resubmit; also check title, screenshots and promo images for brand lists. Package: `SnapLink-1.6.0.zip` (git-ignored, built outside the repo).
+- **Store status:** Extension published. **v1.7.0 submitted for review on 2026-11-13** (package `SnapLink-1.7.0.zip`, built outside the repo; new description from `STORE_LISTING.md`; no host permissions). Result pending — update here when approved/rejected. Previously, the v1.6.0 package was **rejected on 2026-11-10** for "Keyword Spam" (ref. Yellow Argon): the store description listed ten platform names ("Jira, Linear, GitHub, GitLab, Trello, ..."). The package/manifest were fine; the fix is in the Dashboard description only. Use the text in `STORE_LISTING.md` (max 2–3 brand names, in a sentence) and resubmit; also check title, screenshots and promo images for brand lists. Package: `SnapLink-1.6.0.zip` (git-ignored, built outside the repo). When zipping, keep the `icons/` folder (flattening it breaks the manifest icon paths).
 - **Privacy policy URL (store field):** `https://github.com/jraversbcn21/SnapLink/blob/master/PRIVACY.md` — must stay reachable or the store blocks publishing ("Privacy policy link is not reachable"). Do not rename/delete `PRIVACY.md` or make the repo private.
 
 ---
